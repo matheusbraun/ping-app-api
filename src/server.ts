@@ -6,18 +6,19 @@ const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors());
+app.use(cors({ origin: '*' }));
 
 app.get('/', (req, res) => {
-  res.send('Working!!').sendStatus(200);
+  res.send('Running!').sendStatus(200);
 });
 
 app.post('/api/v1/url/ping', async (req, res) => {
-  res.set('Access-Control-Allow-Origin', '*');
-
   const { url, assertion } = req.body;
 
-  const browser = await puppeteer.launch({ ignoreHTTPSErrors: true });
+  const browser = await puppeteer.launch({
+    ignoreHTTPSErrors: true,
+    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+  });
   const page = await browser.newPage();
   await page.goto(url);
 
